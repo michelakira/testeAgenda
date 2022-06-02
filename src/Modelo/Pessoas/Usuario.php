@@ -1,6 +1,6 @@
 <?php
 
-namespace VExpenses\Modelo\Funcionario;
+namespace VExpenses\Modelo\Pessoas;
 
 use VExpenses\Conexao\Conexao;
 use VExpenses\Modelo\Autenticavel;
@@ -28,5 +28,15 @@ class Usuario extends Pessoa implements Autenticavel
         return true;
         else
         return false;
+    }
+
+    public function pegarTodosUsuarios(): array
+    {
+
+        $sql = "SELECT * FROM usuarios";
+		$consulta = Conexao::prepare($sql);
+		$consulta->execute();
+        $usuario = $consulta->fetchAll();
+        return $usuario;
     }
 }

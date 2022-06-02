@@ -2,7 +2,7 @@
 session_start();
 
 use VExpenses\Service\Autenticador;
-use \VExpenses\Modelo\Funcionario\Usuario;
+use \VExpenses\Modelo\Pessoas\Usuario;
 
 require_once 'autoload.php';
 
@@ -44,6 +44,7 @@ if(isset($_POST['login']) && $_POST['login'] == 'login')
 
 <link rel="stylesheet" href="css/bootstrap.min.css">
 <script src="js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="css/estilo_autenticacao.css">
 
 <style>
     html,body {
