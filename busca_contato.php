@@ -20,6 +20,15 @@ if(isset($_POST['id']) && isset($_POST['obterContato']))
 
 if(isset($_POST['salvar']) && $_POST['salvar'] == 'salvar')
 {
-    $resultContato = $contato->insertUpdate($_POST['codigo_contato'],$_POST['nomeContato'],$_POST['apelidoContato'],$_POST['enderecoContato']);
-    echo json_encode($resultContato);
+
+    parse_str($_POST['data'], $myArray);
+
+    foreach($myArray['cepContato'] as $value)
+    {
+        echo "<br>".$value;
+    }
+
+    
+    //$resultContato = $contato->insertUpdate($_POST['codigo_contato'],$_POST['nomeContato'],$_POST['apelidoContato'],$_POST['enderecoContato']);
+    //echo json_encode($resultContato);
 }

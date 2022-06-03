@@ -5,6 +5,7 @@ namespace VExpenses\Modelo\Pessoas;
 use VExpenses\Conexao\Conexao;
 use VExpenses\Modelo\Pessoa;
 use \PDO;
+use VExpenses\Modelo\Log;
 
 class Contato extends Pessoa
 {
@@ -29,6 +30,16 @@ class Contato extends Pessoa
         return $contato;
     }
 
+    public function pegarContatosPesquisa($nome): array
+    {
+
+        $sql = "SELECT id_contato, nome FROM contatos WHERE nome LIKE '%{$nome}%'";
+		$consulta = Conexao::prepare($sql);
+		$consulta->execute();
+        $contato = $consulta->fetchAll();
+        return $contato;
+    }
+
     public function pegarTodosContatos(): array
     {
 
@@ -46,6 +57,10 @@ class Contato extends Pessoa
 		$consulta = Conexao::prepare($sql);
 		$consulta->execute();
         $contato = $consulta->fetchAll();
+
+        $log_contato = new Log();
+        $log_contato->insereLog($id);
+
         return $contato;
     }
 
@@ -53,7 +68,11 @@ class Contato extends Pessoa
     {
         if(empty($codigo_contato) || $codigo_contato == null)
         {
-            $sql = "INSERT INTO contatos(nome,apelido,endereco) VALUES ('{$nomeContato}','{$apelidoContato}','{$apelidoContato}')";
+            $sql = "INSERT INTO contatos(nome,apelido,endereco) VALUES ('{$nomeContato}','{$apelidoContato}','{$enderecoContato}')";
+        }
+        else if(!empty($codigo_contato) || $codigo_contato != null)
+        {
+            $sql = "UPDATE contatos SET nome = '{$nomeContato}', apelido = '{$apelidoContato}', endereco = '{$enderecoContato}' WHERE id_contato = '{$codigo_contato}' LIMIT 1";
         }
         
 		$consulta = Conexao::prepare($sql);
