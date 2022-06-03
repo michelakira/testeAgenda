@@ -14,16 +14,23 @@ $log_contato = new Log();
 if(isset($_POST['botao_pesquisa']))
 {
     $input_pesquisa = $_POST['pesquisa'];
-    $contato = new Contato($_POST['pesquisa']);
-    $resultContato = $contato->pegarContatoId($contato->pegarNome());
+    $contato = new Contato();
+    $resultContato = $contato->pegarContatos($_POST['pesquisa']);
+    //$resultContato = $contato->pegarContatoId($_POST['pesquisa']);
 
     
-    $log_contato->insereLog($resultContato[0]->id_contato);
+    //$log_contato->insereLog($resultContato[0]->id_contato);
 }
 else
 {
+    //obtem os 5 principais contatos pesquisados
     $principaisContatos = '';
     $principaisContatos = $log_contato->obterPrincipaisContatos();
+
+    //obtem todos os contatos
+    $todosContatos = '';
+    $contato = new Contato();
+    $todosContatos = $contato->pegarTodosContatos();
 }
 
 ?>
@@ -32,9 +39,9 @@ else
 
 <nav class="navbar navbar-light bg-light">
     <div class="container-fluid">
-        <a class="navbar-brand">Contatos</a>
+        <a class="navbar-brand titulo-agenda">Contatos</a>
         <form class="d-flex" method="POST">
-            <button class="btn btn-outline-success adicionar_contato"><i class="fa fa-plus"></i></button>
+            <button class="btn btn-outline-success adicionar_contato" type="button" data-bs-toggle="modal" data-bs-target="#cadastroContato" onclick="limpar()"><i class="fa fa-plus"></i></button>
             <div class="autocomplete" style="width:300px;">
                 <input class="form-control me-2" id="pesquisa" name="pesquisa" type="search" placeholder="Pesquisa" aria-label="Pesquisa" value="<?php if(!empty($input_pesquisa)) echo $input_pesquisa; ?>">
             </div>
@@ -42,23 +49,128 @@ else
         </form>
         <div class="container-fluid contatos">
         <div class="row">
-                <?php
+                
+                <?php     
                     if(isset($principaisContatos))
                     {
+                        echo '<div class="col-12 text-center titulo-agenda">Favoritos <i class="fa fa-star"></i></div>';
                         for($i = 0; $i < count($principaisContatos); $i++)
                         {
                             echo '<a href="" class="contatos_principais"><div class="col-12 contatos_principais_div">'.$principaisContatos[$i]->nome."</div></a>";
+                        }
+                        
+                    }
+                    if(isset($todosContatos))
+                    {
+                        echo '<div class="col-12 text-center titulo-agenda">Contatos <i class="fa fa-address-card"></i></i></div>';
+                        for($i = 0; $i < count($todosContatos); $i++)
+                        {
+                            echo '<a href="#" data-bs-toggle="modal" data-bs-target="#cadastroContato" class="contatos_principais" onclick="editar('.$todosContatos[$i]->id_contato.')"><div class="col-12 contatos_principais_div">'.$todosContatos[$i]->nome."</div></a>";
+                        }
+                    }
+                    if(isset($_POST['botao_pesquisa']))
+                    {
+                        echo '<div class="col-12 text-center titulo-agenda">Contatos <i class="fa fa-address-card"></i></i></div>';
+                        for($i = 0; $i < count($resultContato); $i++)
+                        {
+                            echo '<a href="" class="contatos_principais"><div class="col-12 contatos_principais_div">'.$resultContato[$i]."</div></a>";
                         }
                     }
                 ?>
             </div>
         </div>
     </div>
-
 </nav>
+<div class="modal fade" id="cadastroContato" tabindex="-1" aria-labelledby="cadastroContatoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="cadastroContatoLabel">Contato</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="limpar()"></button>
+        </div>
+        <div class="modal-body">
+
+            <div class="col-md-12">
+                <label for="nomeContato">Nome</label>
+                <input class="form-control" type="text" id="nomeContato" name="nomeContato">
+            </div>
+            <div class="col-md-12">
+                <label for="apelidoContato">Apelido</label>
+                <input class="form-control" type="text" id="apelidoContato" name="apelidoContato">
+            </div>
+            <div class="col-md-12">
+                <label for="enderecoContato">Endereço</label>
+                <input class="form-control" type="text" id="enderecoContato" name="enderecoContato">
+            </div>
+            <input type="hidden" id="codigo_contato" name="codigo_contato">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpar()">Fechar</button>
+            <button type="button" class="btn btn-success" onclick="salvar()">Salvar</button>
+        </div>
+        </div>
+    </div>
+</div>
+
 
 <script>
-function autocomplete(inp, arr) {
+
+    $('#cadastroContato').modal({
+                        backdrop: 'static',
+                        keyboard: true, 
+                        show: true
+                }); 
+
+    function limpar(){
+        $("#nomeContato").val('');
+        $("#apelidoContato").val('');
+        $("#enderecoContato").val('');
+        $("#codigo_contato").val('');         
+    }
+
+    function editar(e){
+        var contato = '';
+        $.ajax({
+                type: 'POST',
+                datType: 'json',
+                url:  'busca_contato.php',
+                data: {
+                    id: e,
+                    obterContato: 'obterContato'
+                },
+                success: function(data)
+                {
+                    contato = JSON.parse(data);
+                    $("#nomeContato").val(contato[0]['nome']);
+                    $("#apelidoContato").val(contato[0]['apelido']);
+                    $("#enderecoContato").val(contato[0]['endereco']);
+                    $("#codigo_contato").val(contato[0]['id_contato']);
+                }
+            }); 
+    }
+
+    function salvar(){
+        var contato = '';
+        $.ajax({
+                type: 'POST',
+                datType: 'json',
+                url:  'busca_contato.php',
+                data: {
+                    salvar: 'salvar',
+                    codigo_contato: $("#codigo_contato").val(),
+                    nomeContato: $("#nomeContato").val(),
+                    apelidoContato: $("#apelidoContato").val(),
+                    enderecoContato: $("#enderecoContato").val()
+                },
+                success: function(data)
+                {
+                    if(data)
+                    alert('Inserido com sucesso');
+                }
+            }); 
+    }
+
+    function autocomplete(inp, arr) {
     var currentFocus;
     inp.addEventListener("input", function(e) {
         var a, b, i, val = this.value;
@@ -129,9 +241,10 @@ function autocomplete(inp, arr) {
             $.ajax({
                 type: 'POST',
                 datType: 'json',
-                url:  'src/Pesquisas/busca_contato.php',
+                url:  'busca_contato.php',
                 data: {
-                    nome: $("#pesquisa").val()
+                    nome: $("#pesquisa").val(),
+                    pesquisa: 'pesquisa'
                 },
                 success: function(data)
                 {

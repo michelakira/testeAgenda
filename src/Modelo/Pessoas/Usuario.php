@@ -8,11 +8,12 @@ use VExpenses\Modelo\Pessoa;
 
 class Usuario extends Pessoa implements Autenticavel
 {
+    protected $usuario;
     protected $senha;
 
     public function __construct(string $usuario, string $senha)
     {
-        parent::__construct($usuario, $senha);
+        $this->usuario = $usuario;
         $this->senha = $senha;
     }
 
@@ -25,8 +26,9 @@ class Usuario extends Pessoa implements Autenticavel
         $usuario = $consulta->fetchAll();
 
         if(count($usuario) > 0)
-        return true;
-        else
+        {
+            return true;
+        }
         return false;
     }
 

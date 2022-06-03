@@ -82,11 +82,17 @@ input[type=submit] {
     color: #ffffff;
     padding: 10px;
     border-radius: 5px;
+    font-weight: bold;
     background-color: #4a9974;
 }
 
 .contatos_principais_div:hover {
     color: #000000;
     background-color: #f8f9fa;
+}
+
+.titulo-agenda{
+    font-weight: bold;
+    font-size: 1.2em;
 }
 
