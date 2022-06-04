@@ -52,32 +52,126 @@ class Contato extends Pessoa
 
     public function obterContato($id): array
     {
+        $todasinformacoes = array();
 
         $sql = "SELECT * FROM contatos WHERE id_contato = '{$id}'";
 		$consulta = Conexao::prepare($sql);
 		$consulta->execute();
         $contato = $consulta->fetchAll();
+        array_push($todasinformacoes, $contato);
+
+        $sql = "SELECT * FROM enderecos WHERE id_contato = '{$id}'";
+		$consulta = Conexao::prepare($sql);
+		$consulta->execute();
+        $enderecos = $consulta->fetchAll();
+        array_push($todasinformacoes, $enderecos);
+
+        $sql = "SELECT * FROM telefones WHERE id_contato = '{$id}'";
+		$consulta = Conexao::prepare($sql);
+		$consulta->execute();
+        $telefones = $consulta->fetchAll();
+        array_push($todasinformacoes, $telefones);
 
         $log_contato = new Log();
         $log_contato->insereLog($id);
 
-        return $contato;
+
+        return $todasinformacoes;
     }
 
-    public function insertUpdate($codigo_contato, $nomeContato, $apelidoContato, $enderecoContato): bool
+    public function insertUpdate($codigo_contato, $nomeContato, $apelidoContato): int
     {
         if(empty($codigo_contato) || $codigo_contato == null)
         {
-            $sql = "INSERT INTO contatos(nome,apelido,endereco) VALUES ('{$nomeContato}','{$apelidoContato}','{$enderecoContato}')";
+            $sql = "INSERT INTO contatos(nome,apelido) VALUES ('{$nomeContato}','{$apelidoContato}')";
         }
         else if(!empty($codigo_contato) || $codigo_contato != null)
         {
-            $sql = "UPDATE contatos SET nome = '{$nomeContato}', apelido = '{$apelidoContato}', endereco = '{$enderecoContato}' WHERE id_contato = '{$codigo_contato}' LIMIT 1";
+            $sql = "UPDATE contatos SET nome = '{$nomeContato}', apelido = '{$apelidoContato}' WHERE id_contato = '{$codigo_contato}' LIMIT 1";
         }
         
 		$consulta = Conexao::prepare($sql);
-		$consulta->execute();
+		$resultado = $consulta->execute();
         
-        return true;
+        if($resultado)
+        {
+            if(empty($codigo_contato) || $codigo_contato == null)
+            {
+                $consultaId = Conexao::prepare("SELECT MAX(id_contato) AS id_contato FROM contatos LIMIT 1");
+                $consultaId->execute();
+                $contatoId = $consultaId->fetchAll(PDO::FETCH_COLUMN);
+                $codigo_contato = $contatoId[0];
+            }
+            return $codigo_contato;
+        }
+        return 0;
+    }
+
+    public function insertEndereco($id_contato, $cep, $endereco, $numero, $bairro, $cidade, $estado): int
+    {
+
+        $sql = "INSERT INTO enderecos(id_contato,cep,endereco,numero,bairro,cidade,estado) VALUES ('{$id_contato}','{$cep}','{$endereco}','{$numero}','{$bairro}','{$cidade}','{$estado}')";
+
+		$consulta = Conexao::prepare($sql);
+		$resultado = $consulta->execute();
+
+
+        if($resultado)
+        {
+            return 1;
+        }
+        return 0;
+
+    }
+
+    public function removerEndereco($id_endereco): int
+    {
+
+        $sql = "DELETE FROM enderecos WHERE id_endereco = '{$id_endereco}' LIMIT 1";
+
+		$consulta = Conexao::prepare($sql);
+		$resultado = $consulta->execute();
+
+
+        if($resultado)
+        {
+            return 1;
+        }
+        return 0;
+
+    }
+
+    public function insertTelefone($id_contato, $ddd, $numero): int
+    {
+
+        $sql = "INSERT INTO telefones(id_contato,ddd,numero) VALUES ('{$id_contato}','{$ddd}','{$numero}')";
+
+		$consulta = Conexao::prepare($sql);
+		$resultado = $consulta->execute();
+
+
+        if($resultado)
+        {
+            return 1;
+        }
+        return 0;
+
+    }
+
+    public function removerTelefone($id_telefone): int
+    {
+
+        $sql = "DELETE FROM telefones WHERE id_telefone = '{$id_telefone}' LIMIT 1";
+
+		$consulta = Conexao::prepare($sql);
+		$resultado = $consulta->execute();
+
+
+        if($resultado)
+        {
+            return 1;
+        }
+        return 0;
+
     }
 }

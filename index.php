@@ -35,7 +35,7 @@ else
 
 <nav class="navbar navbar-light bg-light">
     <div class="container-fluid">
-        <a class="navbar-brand titulo-agenda">Contatos</a>
+        <a href="index.php" class="navbar-brand titulo-agenda">Contatos</a>
         <form class="d-flex" method="POST">
             <button class="btn btn-outline-success adicionar_contato" type="button" data-bs-toggle="modal" data-bs-target="#cadastroContato" onclick="limpar()"><i class="fa fa-plus"></i></button>
             <div class="autocomplete" style="width:300px;">
@@ -52,7 +52,7 @@ else
                         echo '<div class="col-12 text-center titulo-agenda">Favoritos <i class="fa fa-star"></i></div>';
                         for($i = 0; $i < count($principaisContatos); $i++)
                         {
-                            echo '<a href="#" data-bs-toggle="modal" data-bs-target="#cadastroContato" class="contatos_principais" onclick="editar('.$principaisContatos[$i]->id_contato.')"><div class="col-12 contatos_principais_div">'.$principaisContatos[$i]->nome."</div></a>";
+                            echo '<a href="#" data-bs-toggle="modal" data-bs-target="#cadastroContato" class="contatos_principais" onclick="editar('.$principaisContatos[$i]->id_contato.')"><div class="col-12 contatos_principais_div"><span class="alfabeto_contato">'.substr(strtoupper($principaisContatos[$i]->nome),0,1).'</span> '.$principaisContatos[$i]->nome."</div></a>";
                         }
                         
                     }
@@ -61,7 +61,7 @@ else
                         echo '<div class="col-12 text-center titulo-agenda">Contatos <i class="fa fa-address-card"></i></i></div>';
                         for($i = 0; $i < count($todosContatos); $i++)
                         {
-                            echo '<a href="#" data-bs-toggle="modal" data-bs-target="#cadastroContato" class="contatos_principais" onclick="editar('.$todosContatos[$i]->id_contato.')"><div class="col-12 contatos_principais_div">'.$todosContatos[$i]->nome."</div></a>";
+                            echo '<a href="#" data-bs-toggle="modal" data-bs-target="#cadastroContato" class="contatos_principais" onclick="editar('.$todosContatos[$i]->id_contato.')"><div class="col-12 contatos_principais_div"><span class="alfabeto_contato">'.substr(strtoupper($todosContatos[$i]->nome),0,1).'</span> '.$todosContatos[$i]->nome."</div></a>";
                         }
                     }
                     if(isset($_POST['botao_pesquisa']))
@@ -69,7 +69,7 @@ else
                         echo '<div class="col-12 text-center titulo-agenda">Contatos <i class="fa fa-address-card"></i></i></div>';
                         for($i = 0; $i < count($resultContato); $i++)
                         {
-                            echo '<a href="#" data-bs-toggle="modal" data-bs-target="#cadastroContato" class="contatos_principais" onclick="editar('.$resultContato[$i]->id_contato.')"><div class="col-12 contatos_principais_div">'.$resultContato[$i]->nome."</div></a>";
+                            echo '<a href="#" data-bs-toggle="modal" data-bs-target="#cadastroContato" class="contatos_principais" onclick="editar('.$resultContato[$i]->id_contato.')"><div class="col-12 contatos_principais_div"><span class="alfabeto_contato">'.substr(strtoupper($resultContato[$i]->nome),0,1).'</span> '.$resultContato[$i]->nome."</div></a>";
                         }
                     }
                 ?>
@@ -97,29 +97,42 @@ else
             <div class="row" id="formulario">
                 <div class="col-4">
                     <label for="cepContato">CEP</label>
-                    <input class="form-control" type="text" id="cepContato[]" name="cepContato[]">
+                    <input class="form-control" type="text" id="cepContato" name="cepContato[]" onblur="carregaCep(this,1)">
                 </div>
                 <div class="col-8">
                     <label for="enderecoContato">Endereço</label>
-                    <input class="form-control" type="text" id="enderecoContato" name="enderecoContato[]">
+                    <input class="form-control" type="text" id="enderecoContato1" name="enderecoContato[]">
                 </div>
                 <div class="col-4">
                     <label for="numeroContato">Número</label>
-                    <input class="form-control" type="text" id="numeroContato" name="numeroContato[]">
+                    <input class="form-control" type="text" id="numeroContato1" name="numeroContato[]">
                 </div>
                 <div class="col-8">
                     <label for="bairroContato">Bairro</label>
-                    <input class="form-control" type="text" id="bairroContato" name="bairroContato[]">
+                    <input class="form-control" type="text" id="bairroContato1" name="bairroContato[]">
                 </div>
                 <div class="col-8">
                     <label for="cidadeContato">Cidade</label>
-                    <input class="form-control" type="text" id="cidadeContato" name="numeroContato[]">
+                    <input class="form-control" type="text" id="cidadeContato1" name="cidadeContato[]">
                 </div>
                 <div class="col-4">
                     <label for="estadoContato">Estado</label>
-                    <input class="form-control" type="text" id="estadoContato" name="estadoContato[]">
+                    <input class="form-control" type="text" id="estadoContato1" name="estadoContato[]">
                 </div>
                 <button type="button" class="btn btn-secondary" id="add-campo"> + </button>
+            </div>
+            <div class="row" id="formulario_telefone">
+                <div class="col-3">
+                    <label for="dddContato">DDD</label>
+                    <input class="form-control" type="text" id="dddContato" name="dddContato[]">
+                </div>
+                <div class="col-8">
+                    <label for="telefoneContato">Telefone</label>
+                    <input class="form-control" type="text" id="telefoneContato" name="telefoneContato[]">
+                </div>
+                <div class="col-1">
+                    <button type="button" class="btn btn-secondary add-campo-telefone" id="add-campo-telefone"> + </button>
+                </div>    
             </div>
             <input type="hidden" id="codigo_contato" name="codigo_contato">
         </form>
@@ -134,6 +147,31 @@ else
 
 <script>
 
+    var cont_tel = 1;
+    $('#add-campo-telefone').click(function () {
+        cont_tel++;
+        $('#formulario_telefone').append('<div class="" id="campo_telefone' + cont_tel + '">' +
+                                            '<div class="row">'+
+                                                '<div class="col-3">'+
+                                                    '<label for="dddContato">DDD</label>'+
+                                                    '<input class="form-control" type="text" id="dddContato'+cont_tel+'" name="dddContato[]">'+
+                                                '</div>'+
+                                                '<div class="col-8">'+
+                                                    '<label for="telefoneContato">Telefone</label>'+
+                                                    '<input class="form-control" type="text" id="telefoneContato'+cont_tel+'" name="telefoneContato[]">'+
+                                                '</div>'+
+                                                '<div class="col-1">'+
+                                                    '<button type="button" id="' + cont_tel + '" class="btn btn-secondary btn-apagar-telefone"> - </button>'+
+                                                '</div>' +
+                                            '</div>'+
+                                        '</div>');
+    });
+
+    $('form').on('click', '.btn-apagar-telefone', function () {
+        var button_id = $(this).attr("id");
+        $('#campo_telefone' + button_id + '').remove();
+    });
+
     var cont = 1;
     $('#add-campo').click(function () {
         cont++;
@@ -141,27 +179,27 @@ else
                                     '<div class="row">'+
                                     '<div class="col-4">'+
                                         '<label for="cepContato">CEP</label>'+
-                                        '<input class="form-control" type="text" id="cepContato[]" name="cepContato[]">'+
+                                        '<input class="form-control" type="text" id="cepContato'+cont+'" name="cepContato[]" onblur="carregaCep(this,' + cont + ')">'+
                                     '</div>'+
                                     '<div class="col-8">'+
                                         '<label for="enderecoContato">Endereço</label>'+
-                                        '<input class="form-control" type="text" id="enderecoContato[]" name="enderecoContato[]">'+
+                                        '<input class="form-control" type="text" id="enderecoContato'+cont+'" name="enderecoContato[]">'+
                                     '</div>'+
                                     '<div class="col-4">'+
                                         '<label for="numeroContato">Número</label>'+
-                                        '<input class="form-control" type="text" id="numeroContato[]" name="numeroContato[]">'+
+                                        '<input class="form-control" type="text" id="numeroContato'+cont+'" name="numeroContato[]">'+
                                     '</div>'+
                                     '<div class="col-8">'+
                                         '<label for="bairroContato">Bairro</label>'+
-                                        '<input class="form-control" type="text" id="bairroContato" name="bairroContato[]">'+
+                                        '<input class="form-control" type="text" id="bairroContato'+cont+'" name="bairroContato[]">'+
                                     '</div>'+
                                     '<div class="col-8">'+
                                         '<label for="cidadeContato">Cidade</label>'+
-                                        '<input class="form-control" type="text" id="cidadeContato[]" name="numeroContato[]">'+
+                                        '<input class="form-control" type="text" id="cidadeContato'+cont+'" name="cidadeContato[]">'+
                                     '</div>'+
                                     '<div class="col-4">'+
                                         '<label for="estadoContato">Estado</label>'+
-                                        '<input class="form-control" type="text" id="estadoContato[]" name="estadoContato[]">'+
+                                        '<input class="form-control" type="text" id="estadoContato'+cont+'" name="estadoContato[]">'+
                                     '</div>'+
                                     '<button type="button" id="' + cont + '" class="btn btn-secondary btn-apagar"> - </button>'+
                                     '</div>'+
@@ -175,9 +213,14 @@ else
 
     function limpar(){
         document.getElementById("formulario_dados_contato").reset();
+        $("#codigo_contato").val('');
         for(var i = 0; i <= cont; i++)
         {
             $('#campo' + i + '').remove();
+        }
+        for(var i = 0; i <= cont_tel; i++)
+        {
+            $('#campo_telefone' + i + '').remove();
         }
     }
 
@@ -194,16 +237,120 @@ else
                 success: function(data)
                 {
                     contato = JSON.parse(data);
-                    $("#nomeContato").val(contato[0]['nome']);
-                    $("#apelidoContato").val(contato[0]['apelido']);
-                    $("#enderecoContato").val(contato[0]['endereco']);
-                    $("#codigo_contato").val(contato[0]['id_contato']);
+                    
+                    $("#nomeContato").val(contato[0][0]['nome']);
+                    $("#apelidoContato").val(contato[0][0]['apelido']);
+                    $("#codigo_contato").val(contato[0][0]['id_contato']);
+
+                    for(var i = 0; i < contato[1].length; i++)
+                    {
+                        if(i == 0)
+                        {
+                            $("#cepContato").val(contato[1][i]['cep']);
+                            $("#enderecoContato1").val(contato[1][i]['endereco']);
+                            $("#numeroContato1").val(contato[1][i]['numero']);
+                            $("#bairroContato1").val(contato[1][i]['bairro']);
+                            $("#cidadeContato1").val(contato[1][i]['cidade']);
+                            $("#estadoContato1").val(contato[1][i]['estado']);
+                        }
+                        else
+                        {
+                            $('#formulario').append('<div class="" id="campo' + i + '">' +
+                                    '<div class="row">'+
+                                    '<div class="col-4">'+
+                                        '<label for="cepContato">CEP</label>'+
+                                        '<input class="form-control" type="text" id="cepContato'+i+'" name="cepContato[]" onblur="carregaCep(this,' + cont + ')" value="'+contato[1][i]['cep']+'">'+
+                                    '</div>'+
+                                    '<div class="col-8">'+
+                                        '<label for="enderecoContato">Endereço</label>'+
+                                        '<input class="form-control" type="text" id="enderecoContato'+i+'" name="enderecoContato[]" value="'+contato[1][i]['endereco']+'">'+
+                                    '</div>'+
+                                    '<div class="col-4">'+
+                                        '<label for="numeroContato">Número</label>'+
+                                        '<input class="form-control" type="text" id="numeroContato'+i+'" name="numeroContato[]" value="'+contato[1][i]['numero']+'">'+
+                                    '</div>'+
+                                    '<div class="col-8">'+
+                                        '<label for="bairroContato">Bairro</label>'+
+                                        '<input class="form-control" type="text" id="bairroContato'+i+'" name="bairroContato[]" value="'+contato[1][i]['bairro']+'">'+
+                                    '</div>'+
+                                    '<div class="col-8">'+
+                                        '<label for="cidadeContato">Cidade</label>'+
+                                        '<input class="form-control" type="text" id="cidadeContato'+i+'" name="cidadeContato[]" value="'+contato[1][i]['cidade']+'">'+
+                                    '</div>'+
+                                    '<div class="col-4">'+
+                                        '<label for="estadoContato">Estado</label>'+
+                                        '<input class="form-control" type="text" id="estadoContato'+i+'" name="estadoContato[]" value="'+contato[1][i]['estado']+'">'+
+                                    '</div>'+
+                                    '<button type="button" id="' + i + '" class="btn btn-secondary btn-apagar" onclick="removerEndereco('+contato[1][i]['id_endereco']+')"> - </button>'+
+                                    '</div>'+
+                                '</div>');
+                        }
+                    }
+                    console.log(contato[2]);
+                    for(var i = 0; i < contato[2].length; i++)
+                    {
+                        if(i == 0)
+                        {
+                            $("#dddContato").val(contato[2][i]['ddd']);
+                            $("#telefoneContato").val(contato[2][i]['numero']);
+                        }
+                        else
+                        {
+                            $('#formulario_telefone').append('<div class="" id="campo_telefone' + i + '">' +
+                                            '<div class="row">'+
+                                                '<div class="col-3">'+
+                                                    '<label for="dddContato">DDD</label>'+
+                                                    '<input class="form-control" type="text" id="dddContato'+i+'" name="dddContato[]" value="'+contato[2][i]['ddd']+'">'+
+                                                '</div>'+
+                                                '<div class="col-8">'+
+                                                    '<label for="telefoneContato">Telefone</label>'+
+                                                    '<input class="form-control" type="text" id="telefoneContato'+i+'" name="telefoneContato[]" value="'+contato[2][i]['numero']+'">'+
+                                                '</div>'+
+                                                '<div class="col-1">'+
+                                                    '<button type="button" id="' + i + '" class="btn btn-secondary btn-apagar-telefone" onclick="removerTelefone('+contato[2][i]['id_telefone']+')"> - </button>'+
+                                                '</div>' +
+                                            '</div>'+
+                                        '</div>');
+                        }
+                    }
                 }
             }); 
     }
 
+    function removerEndereco(endereco){
+
+        $.ajax({
+                type: 'POST',
+                url:  'busca_contato.php',
+                data: {
+                    removerEndereco: 'removerEndereco',
+                    endereco: endereco
+                },
+                success: function(data)
+                {
+                    //document.location.reload(true);
+                }
+            }); 
+    }
+
+    function removerTelefone(telefone){
+
+        $.ajax({
+                type: 'POST',
+                url:  'busca_contato.php',
+                data: {
+                    removerTelefone: 'removerTelefone',
+                    telefone: telefone
+                },
+                success: function(data)
+                {
+                    //document.location.reload(true);
+                }
+            }); 
+        }
+
     function salvar(){
-        var contato = '';
+
         $.ajax({
                 type: 'POST',
                 url:  'busca_contato.php',
@@ -304,65 +451,66 @@ else
                 }
             }); 
         });
+    });
 
-        function limpa_formulário_cep() {
+    function limpa_formulário_cep(numero) {
                 // Limpa valores do formulário de cep.
-                $("#enderecoContato").val("");
-                $("#bairroContato").val("");
-                $("#cidadeContato").val("");
-                $("#estadoContato").val("");
+                $("#enderecoContato"+numero).val("");
+                $("#bairroContato"+numero).val("");
+                $("#cidadeContato"+numero).val("");
+                $("#estadoContato"+numero).val("");
             }
+
+    //Quando o campo cep perde o foco.
+    function carregaCep(CEP, numero) {
         
-        //Quando o campo cep perde o foco.
-        $("#cepContato").blur(function() {
+        //Nova variável "cep" somente com dígitos.
+        var cep = CEP.value.replace(/\D/g, '');
 
-            //Nova variável "cep" somente com dígitos.
-            var cep = $(this).val().replace(/\D/g, '');
+        //Verifica se campo cep possui valor informado.
+        if (cep != "") {
 
-            //Verifica se campo cep possui valor informado.
-            if (cep != "") {
+            //Expressão regular para validar o CEP.
+            var validacep = /^[0-9]{8}$/;
 
-                //Expressão regular para validar o CEP.
-                var validacep = /^[0-9]{8}$/;
+            //Valida o formato do CEP.
+            if(validacep.test(cep)) {
 
-                //Valida o formato do CEP.
-                if(validacep.test(cep)) {
+                //Preenche os campos com "..." enquanto consulta webservice.
+                $("#enderecoContato"+numero).val("...");
+                $("#bairroContato"+numero).val("...");
+                $("#cidadeContato"+numero).val("...");
+                $("#estadoContato"+numero).val("...");
 
-                    //Preenche os campos com "..." enquanto consulta webservice.
-                    $("#enderecoContato").val("...");
-                    $("#bairroContato").val("...");
-                    $("#cidadeContato").val("...");
-                    $("#estadoContato").val("...");
+                //Consulta o webservice viacep.com.br/
+                $.getJSON("https://viacep.com.br/ws/"+ cep +"/json/?callback=?", function(dados) {
 
-                    //Consulta o webservice viacep.com.br/
-                    $.getJSON("https://viacep.com.br/ws/"+ cep +"/json/?callback=?", function(dados) {
-
-                        if (!("erro" in dados)) {
-                            //Atualiza os campos com os valores da consulta.
-                            $("#enderecoContato").val(dados.logradouro);
-                            $("#bairroContato").val(dados.bairro);
-                            $("#cidadeContato").val(dados.localidade);
-                            $("#estadoContato").val(dados.uf);
-                        } //end if.
-                        else {
-                            //CEP pesquisado não foi encontrado.
-                            limpa_formulário_cep();
-                            alert("CEP não encontrado.");
-                        }
-                    });
-                } //end if.
-                else {
-                    //cep é inválido.
-                    limpa_formulário_cep();
-                    alert("Formato de CEP inválido.");
-                }
+                    if (!("erro" in dados)) {
+                        //Atualiza os campos com os valores da consulta.
+                        $("#enderecoContato"+numero).val(dados.logradouro);
+                        $("#bairroContato"+numero).val(dados.bairro);
+                        $("#cidadeContato"+numero).val(dados.localidade);
+                        $("#estadoContato"+numero).val(dados.uf);
+                    } //end if.
+                    else {
+                        //CEP pesquisado não foi encontrado.
+                        limpa_formulário_cep(numero);
+                        alert("CEP não encontrado.");
+                    }
+                });
             } //end if.
             else {
-                //cep sem valor, limpa formulário.
-                limpa_formulário_cep();
+                //cep é inválido.
+                limpa_formulário_cep(numero);
+                alert("Formato de CEP inválido.");
             }
-        });
-    });
+        } //end if.
+        else {
+            //cep sem valor, limpa formulário.
+            limpa_formulário_cep(numero);
+        }
+    };
+
 
 
 </script>
