@@ -25,6 +25,13 @@ if(isset($_POST['salvar']) && $_POST['salvar'] == 'salvar')
 
     //retorna o contato para inserir o endereço
     $resultContato = $contato->insertUpdate($myArray['codigo_contato'],$myArray['nomeContato'],$myArray['apelidoContato']);
+
+    if($myArray['codigo_contato'] > 0)
+    {
+        $contato->removerEndereco(0, $myArray['codigo_contato']);
+        $contato->removerTelefone(0, $myArray['codigo_contato']);
+    }
+    
     
     foreach($myArray['cepContato'] as $key => $value)
     {
@@ -49,12 +56,12 @@ if(isset($_POST['salvar']) && $_POST['salvar'] == 'salvar')
 
 if(isset($_POST['removerEndereco']) && isset($_POST['endereco']))
 {
-    $resultContato = $contato->removerEndereco($_POST['endereco']);
+    $resultContato = $contato->removerEndereco($_POST['endereco'], 0);
     echo json_encode($resultContato);
 }
 
 if(isset($_POST['removerTelefone']) && isset($_POST['telefone']))
 {
-    $resultContato = $contato->removerTelefone($_POST['telefone']);
+    $resultContato = $contato->removerTelefone($_POST['telefone'], 0);
     echo json_encode($resultContato);
 }

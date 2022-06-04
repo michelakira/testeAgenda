@@ -114,13 +114,44 @@ input[type=submit] {
     background-color: #4a9974;
 }
 
+.btn-apagar{
+    margin-top: 24px;
+    width: 38px;
+}
+
 .add-campo-telefone{
-    margin-top: 22px;
+    margin-top: 24px;
     margin-left: -10px;
 }
 
 .btn-apagar-telefone{
-    margin-top: 22px;
-    margin-left: -10px;
+    margin-top: 24px;
+    margin-left: -12px;
+    width: 38px;
 }
 
+.errors_form{
+    color: red;
+}
+
+input:read-only {
+    background-color: #f5f5f5 !important;
+}
+
+#formulario, #formulario_telefone{
+    margin-top: 5px;
+}
+
+.contatos_letra_alfabeto{
+    color: #000000;
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    background-color: #ffffff;
+    margin-top: 1px;
+    text-decoration: none;
+}
+
+.contatos_letra_alfabeto_link{
+    text-decoration: none;
+}

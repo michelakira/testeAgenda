@@ -124,10 +124,18 @@ class Contato extends Pessoa
 
     }
 
-    public function removerEndereco($id_endereco): int
+    public function removerEndereco($id_endereco, $id_contato): int
     {
+        if($id_contato > 0)
+        {
+            $whereOp = " id_contato = '{$id_contato}' ";
+        }
+        else
+        {
+            $whereOp = " id_endereco = '{$id_endereco}' ";
+        }
 
-        $sql = "DELETE FROM enderecos WHERE id_endereco = '{$id_endereco}' LIMIT 1";
+        $sql = "DELETE FROM enderecos WHERE {$whereOp} ";
 
 		$consulta = Conexao::prepare($sql);
 		$resultado = $consulta->execute();
@@ -158,10 +166,18 @@ class Contato extends Pessoa
 
     }
 
-    public function removerTelefone($id_telefone): int
+    public function removerTelefone($id_telefone, $id_contato): int
     {
+        if($id_contato > 0)
+        {
+            $whereOp = " id_contato = '{$id_contato}' ";
+        }
+        else
+        {
+            $whereOp = " id_telefone = '{$id_telefone}' ";
+        }
 
-        $sql = "DELETE FROM telefones WHERE id_telefone = '{$id_telefone}' LIMIT 1";
+        $sql = "DELETE FROM telefones WHERE {$whereOp} ";
 
 		$consulta = Conexao::prepare($sql);
 		$resultado = $consulta->execute();
