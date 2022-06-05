@@ -61,29 +61,34 @@ else
                         echo '<div class="col-12 text-center titulo-agenda">Contatos <i class="fa fa-address-card"></i></i></div>';
                         $letra = '';
                         $conteudoContato = '';
-                        for($i = 0; $i < count($todosContatos); $i++)
+                        for($i = 0; $i <= (count($todosContatos) ); $i++)
                         {
-                            
-                            if($letra != substr(strtoupper($todosContatos[$i]->nome),0,1) && $i > 0)
+                            $cabecarioLetra = '
+                                                <a href="#" data-toggle="collapse" data-target="#contatos_'.$letra.'" aria-expanded="true" class="col-12 contatos_letra_alfabeto_link">
+                                                    <div id="contatos_div_'.$letra.'" class="col-12 contatos_letra_alfabeto text-center">'.$letra.'</div>
+                                                </a>
+                                                    <div class="collapse show" id="contatos_'.$letra.'">
+                                            ';
+                            if(!isset($todosContatos[$i]->nome))
+                            {
+                                echo $cabecarioLetra;
+                                echo $conteudoContato;
+                                echo '</div>';
+                                break; 
+                            }
+                            if($letra != substr(strtoupper($todosContatos[$i]->nome),0,1) && $letra != 'fim' )
                             {
                                 
-                                echo '
-                                        <a href="#" data-toggle="collapse" data-target="#contatos_'.$letra.'" aria-expanded="true" class="col-12 contatos_letra_alfabeto_link">
-                                            <div id="contatos_div_'.$letra.'" class="col-12 contatos_letra_alfabeto text-center">'.$letra.'</div>
-                                        </a>
-                                    <div class="collapse show" id="contatos_'.$letra.'">
-                                      ';
+                                echo $cabecarioLetra;
                                 echo $conteudoContato;
                                 echo '</div>';
                                 $conteudoContato = '';
+
                             }
-                            $conteudoContato .= '
-                            
 
-                            <a href="#" data-bs-toggle="modal" data-bs-target="#cadastroContato" class="contatos_principais" onclick="editar('.$todosContatos[$i]->id_contato.')"><div class="col-12 contatos_principais_div"><span class="alfabeto_contato">'.substr(strtoupper($todosContatos[$i]->nome),0,1).'</span> '.$todosContatos[$i]->nome.'</div></a>
+                            $conteudoContato .= '<a href="#" data-bs-toggle="modal" data-bs-target="#cadastroContato" class="contatos_principais" onclick="editar('.$todosContatos[$i]->id_contato.')"><div class="col-12 contatos_principais_div"><span class="alfabeto_contato">'.substr(strtoupper($todosContatos[$i]->nome),0,1).'</span> '.$todosContatos[$i]->nome.'</div></a>';
 
-                        ';
-                        $letra = substr(strtoupper($todosContatos[$i]->nome),0,1);
+                            $letra = substr(strtoupper($todosContatos[$i]->nome),0,1);
                             
                         }
                     }
@@ -157,11 +162,11 @@ else
                 <hr>
                 <div class="col-3">
                     <label for="dddContato">DDD</label>
-                    <input class="form-control" type="text" id="dddContato" name="dddContato[]" maxlength="2">
+                    <input class="form-control" type="number" id="dddContato" name="dddContato[]" maxlength="2" onkeypress="return apenasNumeros(event,this,'ddd');">
                 </div>
                 <div class="col-8">
                     <label for="telefoneContato">Telefone</label>
-                    <input class="form-control" type="text" id="telefoneContato" name="telefoneContato[]" maxlength="9">
+                    <input class="form-control" type="number" id="telefoneContato" name="telefoneContato[]" maxlength="9" onkeypress="return apenasNumeros(event,this,'tel');">
                 </div>
                 <div class="col-1">
                     <button type="button" class="btn btn-secondary add-campo-telefone" id="add-campo-telefone"> + </button>
@@ -191,6 +196,32 @@ else
 
 <script>
 
+    function apenasNumeros(e, t, tipo) {
+        if(t.value.length==9 && tipo == 'tel')
+        {
+            return false;
+        }
+        if(t.value.length==2 && tipo == 'ddd')
+        {
+            return false;
+        }
+        try {
+            if (window.event) {
+                var charCode = window.event.keyCode;
+            } else if (e) {
+                var charCode = e.which;
+            } else {
+                return true;
+            }
+            if (charCode > 47 && charCode < 58)
+                return true;
+            else
+                return false;
+        } catch (err) {
+            alert(err.Description);
+        }
+    }
+
     function apenasLetras(e, t) {
         try {
             if (window.event) {
@@ -216,11 +247,11 @@ else
                                             '<div class="row">'+
                                                 '<div class="col-3">'+
                                                     '<label for="dddContato">DDD</label>'+
-                                                    '<input class="form-control" type="text" id="dddContato'+cont_tel+'" maxlength="2" name="dddContato[]">'+
+                                                    '<input class="form-control" type="number" id="dddContato'+cont_tel+'" maxlength="2" name="dddContato[]">'+
                                                 '</div>'+
                                                 '<div class="col-8">'+
                                                     '<label for="telefoneContato">Telefone</label>'+
-                                                    '<input class="form-control" type="text" id="telefoneContato'+cont_tel+'" maxlength="9" name="telefoneContato[]">'+
+                                                    '<input class="form-control" type="number" id="telefoneContato'+cont_tel+'" maxlength="9" name="telefoneContato[]">'+
                                                 '</div>'+
                                                 '<div class="col-1">'+
                                                     '<button type="button" id="' + cont_tel + '" class="btn btn-secondary btn-apagar-telefone"> - </button>'+
@@ -394,11 +425,11 @@ else
                                             '<div class="row">'+
                                                 '<div class="col-3">'+
                                                     '<label for="dddContato">DDD</label>'+
-                                                    '<input class="form-control" type="text" id="dddContato'+i+'" name="dddContato[]" maxlength="2" value="'+contato[2][i]['ddd']+'">'+
+                                                    '<input class="form-control" type="number" id="dddContato'+i+'" name="dddContato[]" maxlength="2" value="'+contato[2][i]['ddd']+'">'+
                                                 '</div>'+
                                                 '<div class="col-8">'+
                                                     '<label for="telefoneContato">Telefone</label>'+
-                                                    '<input class="form-control" type="text" id="telefoneContato'+i+'" name="telefoneContato[]" maxlength="9" value="'+contato[2][i]['numero']+'">'+
+                                                    '<input class="form-control" type="number" id="telefoneContato'+i+'" name="telefoneContato[]" maxlength="9" value="'+contato[2][i]['numero']+'">'+
                                                 '</div>'+
                                                 '<div class="col-1">'+
                                                     '<button type="button" id="' + i + '" class="btn btn-secondary btn-apagar-telefone" onclick="removerTelefone('+contato[2][i]['id_telefone']+')"> - </button>'+
@@ -422,7 +453,20 @@ else
                 },
                 success: function(data)
                 {
-                    //document.location.reload(true);
+                    if(data == '0')
+                    {
+                        $(document).ready(function(){
+                            $('#toast_msg').html('<p>Erro ao remover endereco contato</br></p>');
+                            $('.toast').toast('show');
+                        }); 
+                    }
+                    else if(data == '1')
+                    {
+                        $(document).ready(function(){
+                            $('#toast_msg').html('<p>Endereco de contato removido</br></p>');
+                            $('.toast').toast('show');
+                        }); 
+                    }
                 }
             }); 
     }
@@ -438,7 +482,20 @@ else
                 },
                 success: function(data)
                 {
-                    //document.location.reload(true);
+                    if(data == '0')
+                    {
+                        $(document).ready(function(){
+                            $('#toast_msg').html('<p>Erro ao remover telefone contato</br></p>');
+                            $('.toast').toast('show');
+                        }); 
+                    }
+                    else if(data == '1')
+                    {
+                        $(document).ready(function(){
+                            $('#toast_msg').html('<p>Telefone de contato removido</br></p>');
+                            $('.toast').toast('show');
+                        }); 
+                    }
                 }
             }); 
         }
@@ -478,9 +535,7 @@ else
                     data: $("#formulario_dados_contato").serialize()
                 },
                 success: function(data)
-                {
-                    console.log(data);
-                    
+                {                    
                     if(typeof data.errors !== 'undefined')
                     {
                         for(var i = 0; i < data.errors.length; i++)
@@ -493,8 +548,7 @@ else
                         $(document).ready(function(){
                             $('#toast_msg').html('<p>Erro ao salvar contato</br></p>');
                             $('.toast').toast('show');
-                            $('.modal').hide();
-                            $('.modal-backdrop').hide();
+                            $('#cadastroContato').modal('hide');
                         });
                         
                         
@@ -504,9 +558,9 @@ else
                         $(document).ready(function(){
                             $('#toast_msg').html('<p>Contato salvo com sucesso</br></p>');
                             $('.toast').toast('show');
-                            $('.modal').hide();
-                            $('.modal-backdrop').hide();
+                            $('#cadastroContato').modal('hide');
                         });
+                        
                         //document.location.reload(true);
                     }
                     
@@ -613,6 +667,7 @@ else
                 $("#estadoContato"+numero).val("");
             }
     
+    //atribui onready aos formulario de cep
     function readyOnlyEndereco(numero)
     {
         $("#enderecoContato"+numero).attr("readonly", true); 
