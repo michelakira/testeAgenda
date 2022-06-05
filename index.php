@@ -247,11 +247,11 @@ else
                                             '<div class="row">'+
                                                 '<div class="col-3">'+
                                                     '<label for="dddContato">DDD</label>'+
-                                                    '<input class="form-control" type="number" id="dddContato'+cont_tel+'" maxlength="2" name="dddContato[]">'+
+                                                    '<input class="form-control" type="number" id="dddContato'+cont_tel+'" maxlength="2" name="dddContato[]" onkeypress="return apenasNumeros(event,this,\'ddd\');">'+
                                                 '</div>'+
                                                 '<div class="col-8">'+
                                                     '<label for="telefoneContato">Telefone</label>'+
-                                                    '<input class="form-control" type="number" id="telefoneContato'+cont_tel+'" maxlength="9" name="telefoneContato[]">'+
+                                                    '<input class="form-control" type="number" id="telefoneContato'+cont_tel+'" maxlength="9" name="telefoneContato[]" onkeypress="return apenasNumeros(event,this,\'tel\');">'+
                                                 '</div>'+
                                                 '<div class="col-1">'+
                                                     '<button type="button" id="' + cont_tel + '" class="btn btn-secondary btn-apagar-telefone"> - </button>'+
@@ -425,11 +425,11 @@ else
                                             '<div class="row">'+
                                                 '<div class="col-3">'+
                                                     '<label for="dddContato">DDD</label>'+
-                                                    '<input class="form-control" type="number" id="dddContato'+i+'" name="dddContato[]" maxlength="2" value="'+contato[2][i]['ddd']+'">'+
+                                                    '<input class="form-control" type="number" id="dddContato'+i+'" name="dddContato[]" maxlength="2" value="'+contato[2][i]['ddd']+'" onkeypress="return apenasNumeros(event,this,\'ddd\');">'+
                                                 '</div>'+
                                                 '<div class="col-8">'+
                                                     '<label for="telefoneContato">Telefone</label>'+
-                                                    '<input class="form-control" type="number" id="telefoneContato'+i+'" name="telefoneContato[]" maxlength="9" value="'+contato[2][i]['numero']+'">'+
+                                                    '<input class="form-control" type="number" id="telefoneContato'+i+'" name="telefoneContato[]" maxlength="9" value="'+contato[2][i]['numero']+'" onkeypress="return apenasNumeros(event,this,\'tel\');">'+
                                                 '</div>'+
                                                 '<div class="col-1">'+
                                                     '<button type="button" id="' + i + '" class="btn btn-secondary btn-apagar-telefone" onclick="removerTelefone('+contato[2][i]['id_telefone']+')"> - </button>'+
