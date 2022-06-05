@@ -16,6 +16,29 @@ body {
 
 .adicionar_contato{
     margin-right: 20px;
+    color: #9ab8d6 !important;
+    border-color: #9ab8d6 !important;
+}
+
+.bt_pesquisa{
+    color: #9ab8d6 !important;
+    border-color: #81aad3 !important;
+}
+
+.adicionar_contato:hover, .bt_pesquisa:hover{
+    color: #ffffff !important;
+    background-color: #9ab8d6 !important;
+
+}
+
+.bt_salvar_form{
+    color: #ffffff !important;
+    background-color: #9ab8d6 !important;
+    border-color: #81aad3 !important;
+}
+
+.btn-outline-success{
+    border-color: #81aad3 !important;
 }
 
 .autocomplete {
@@ -83,7 +106,7 @@ input[type=submit] {
     padding: 10px;
     border-radius: 5px;
     font-weight: bold;
-    background-color: #4a9974;
+    background-color: #9ab8d6;
     margin-top: 1px;
 }
 
@@ -111,23 +134,28 @@ input[type=submit] {
 
 .contatos_principais_div:hover .alfabeto_contato{
     color: #ffffff;
-    background-color: #4a9974;
+    background-color: #9ab8d6;
+}
+
+.add-campo{
+    margin-left: -12px;
 }
 
 .btn-apagar{
     margin-top: 24px;
-    width: 38px;
+    margin-left: -12px;
+    width: 35px;
 }
 
 .add-campo-telefone{
     margin-top: 24px;
-    margin-left: -10px;
+    margin-left: -12px;
 }
 
 .btn-apagar-telefone{
     margin-top: 24px;
     margin-left: -12px;
-    width: 38px;
+    width: 35px;
 }
 
 .errors_form{

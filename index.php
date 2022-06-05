@@ -37,11 +37,11 @@ else
     <div class="container-fluid">
         <a href="index.php" class="navbar-brand titulo-agenda">Contatos</a>
         <form class="d-flex" method="POST">
-            <button class="btn btn-outline-success adicionar_contato" type="button" data-bs-toggle="modal" data-bs-target="#cadastroContato" onclick="limpar()"><i class="fa fa-plus"></i></button>
+            <button class="btn adicionar_contato" type="button" data-bs-toggle="modal" data-bs-target="#cadastroContato" onclick="limpar()"><i class="fa fa-plus"></i></button>
             <div class="autocomplete" style="width:300px;">
                 <input class="form-control me-2" id="pesquisa" name="pesquisa" type="search" placeholder="Pesquisa" aria-label="Pesquisa" value="<?php if(!empty($input_pesquisa)) echo $input_pesquisa; ?>">
             </div>
-            <button class="btn btn-outline-success" type="submit" name="botao_pesquisa" value="botao_pesquisa"><i class="fa fa-search"></i></button>
+            <button class="btn bt_pesquisa" type="submit" name="botao_pesquisa" value="botao_pesquisa"><i class="fa fa-search"></i></button>
         </form>
         <div class="container-fluid contatos">
         <div class="row">
@@ -85,8 +85,6 @@ else
                         ';
                         $letra = substr(strtoupper($todosContatos[$i]->nome),0,1);
                             
-                            
-                            //echo '<a href="#" data-bs-toggle="modal" data-bs-target="#cadastroContato" class="contatos_principais" onclick="editar('.$todosContatos[$i]->id_contato.')"><div class="col-12 contatos_principais_div"><span class="alfabeto_contato">'.$letra.'</span> '.$todosContatos[$i]->nome.'</div></a>';
                         }
                     }
                     if(isset($_POST['botao_pesquisa']))
@@ -152,7 +150,7 @@ else
                     </div>
                 </div>
                 <div class="col-1">
-                    <button type="button" class="btn btn-secondary" id="add-campo"> + </button>
+                    <button type="button" class="btn btn-secondary add-campo" id="add-campo"> + </button>
                 </div>
             </div>
             <div class="row" id="formulario_telefone">
@@ -173,16 +171,23 @@ else
         </form>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpar()">Fechar</button>
-            <button type="submit" class="btn btn-success" onclick="salvar()">Salvar</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpar()"><span style="font-weight:bold;">Fechar</span></button>
+            <button type="submit" class="btn bt_salvar_form" onclick="salvar()"><span style="font-weight:bold;">Salvar</span></button>
         </div>
         </div>
     </div>
 </div>
 
-
-
-
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 99999">
+    <div class="toast hide">
+        <div class="toast-header">
+            <strong class="me-auto">Contatos</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body" id="toast_msg">
+        </div>
+    </div>
+</div>
 
 <script>
 
@@ -195,7 +200,7 @@ else
             } else {
                 return true;
             }
-            if ((charCode > 64 && charCode < 91) || (charCode > 96 && charCode < 123))
+            if ((charCode > 64 && charCode < 91) || (charCode > 96 && charCode < 123) || charCode == 32)
                 return true;
             else
                 return false;
@@ -268,6 +273,9 @@ else
                                         '</div>'+
                                     '</div>'+
                                 '</div>');
+        $(document).ready(function() {
+            $("#cepContato"+ cont).mask("99.999-999");
+        });
     });
 
     $('form').on('click', '.btn-apagar', function () {
@@ -322,6 +330,7 @@ else
                         if(i == 0)
                         {
                             $("#cepContato").val(contato[1][i]['cep']);
+                            $("#cepContato").mask("99.999-999", contato[1][i]['cep']);
                             $("#enderecoContato1").val(contato[1][i]['endereco']);
                             $("#numeroContato1").val(contato[1][i]['numero']);
                             $("#bairroContato1").val(contato[1][i]['bairro']);
@@ -366,9 +375,11 @@ else
                                         '</div>'+
                                     '</div>'+
                                 '</div>');
+                                $("#cepContato"+i).val(contato[1][i]['cep']);
+                                $("#cepContato"+i).mask("99.999-999", contato[1][i]['cep']);
                         }
                     }
-                    console.log(contato[2]);
+
                     for(var i = 0; i < contato[2].length; i++)
                     {
                         cont_tel++;
@@ -446,7 +457,7 @@ else
             $('#errors').append('<span class="errors_form">Nome maior que 150 caracteres</br></span>');
             $errors = true;
         }
-        if($("#apelidoContato").val().length > 1)
+        if($("#apelidoContato").val().length > 150)
         {
             $('#errors').append('<span class="errors_form">Apelido maior que 150 caracteres</br></span>');
             $errors = true;
@@ -460,6 +471,7 @@ else
 
         $.ajax({
                 type: 'POST',
+                dataType: 'json',
                 url:  'busca_contato.php',
                 data: {
                     salvar: 'salvar',
@@ -467,8 +479,37 @@ else
                 },
                 success: function(data)
                 {
-                    $('.modal').modal('hide'); 
-                    //document.location.reload(true);
+                    console.log(data);
+                    
+                    if(typeof data.errors !== 'undefined')
+                    {
+                        for(var i = 0; i < data.errors.length; i++)
+                        {
+                            $('#errors').append(data.errors[i]);
+                        }
+                    }
+                    else if(data == '0')
+                    {
+                        $(document).ready(function(){
+                            $('#toast_msg').html('<p>Erro ao salvar contato</br></p>');
+                            $('.toast').toast('show');
+                            $('.modal').hide();
+                            $('.modal-backdrop').hide();
+                        });
+                        
+                        
+                    }
+                    else if(data == '1')
+                    {
+                        $(document).ready(function(){
+                            $('#toast_msg').html('<p>Contato salvo com sucesso</br></p>');
+                            $('.toast').toast('show');
+                            $('.modal').hide();
+                            $('.modal-backdrop').hide();
+                        });
+                        //document.location.reload(true);
+                    }
+                    
                 }
             }); 
     }
@@ -540,6 +581,7 @@ else
     }
 
     $(document).ready(function() {
+        
         $("#cepContato").mask("99.999-999");
 
         $('#pesquisa').keyup(function()
@@ -635,7 +677,7 @@ else
                         //CEP pesquisado não foi encontrado.
                         limpa_formulário_cep(numero);
                         readyOnlyEndereco(numero);
-                        $('#errors').append('<span class="errors_form">CEP não encontrado</br></span>');
+                        $('#errors').append('<span class="errors_form">CEP('+cep+') não encontrado</br></span>');
                     }
                 });
             } //end if.
