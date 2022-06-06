@@ -50,6 +50,14 @@ class Contato extends Pessoa
         return $contato;
     }
 
+    public function pegarPrincipaisContatos(): array
+    {
+
+        $log_contato = new Log();
+        $principaisContatos = $log_contato->obterPrincipaisContatos();
+        return $principaisContatos;
+    }
+
     public function obterContato($id): array
     {
         $todasinformacoes = array();

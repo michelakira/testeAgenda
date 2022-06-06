@@ -13,6 +13,20 @@ if(isset($_POST['nome']) && isset($_POST['pesquisa']))
     echo json_encode($resultContato);
 }
 
+//Pesquisa todos contatos
+if(isset($_POST['pesquisa']) && $_POST['pesquisa'] == 'obterContatos')
+{
+    $resultContato = $contato->pegarTodosContatos();
+    echo json_encode($resultContato);
+}
+
+//Pesquisa principais contatos
+if(isset($_POST['pesquisa']) && $_POST['pesquisa'] == 'obterPrincipaisContatos')
+{
+    $resultContato = $contato->pegarPrincipaisContatos();
+    echo json_encode($resultContato);
+}
+
 //Pesquisa pelo id do contato
 if(isset($_POST['id']) && isset($_POST['obterContato']))
 {
@@ -54,7 +68,7 @@ if(isset($_POST['salvar']) && $_POST['salvar'] == 'salvar')
     foreach($myArray['cepContato'] as $key => $value)
     {
         $cepFormatado = str_replace(array("-", "."), '', $value);
-        if(!is_int(($cepFormatado * 1)) || strlen($cepFormatado) > 8)
+        if(!empty($cepFormatado) && (!is_int(($cepFormatado * 1)) || strlen($cepFormatado) > 8))
         {
             $errors_mensagem['errors'][] = '<span class="errors_form">CEP('.$cepFormatado.') não está no formato correto<br/></span>';
             $errors = true;
