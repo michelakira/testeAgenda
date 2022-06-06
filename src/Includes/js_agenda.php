@@ -1,4 +1,46 @@
 <script>
+    //Remover Contato
+    function removerContato(contato, nome){
+
+        var resultado = confirm("Deseja excluir o contato: " + nome + " ?");
+        if (resultado == true) {
+            $.ajax({
+                type: 'POST',
+                datType: 'json',
+                url:  'busca_contato.php',
+                data: {
+                    remover: 'remover_contato',
+                    contato: contato
+                },
+                success: function(data)
+                {
+                    if(data == '0')
+                    {
+                        $(document).ready(function(){
+                            $('#toast_msg').html('<p>Erro ao excluir contato</br></p>');
+                            $('.toast').toast('show');
+                        }); 
+                    }
+                    else if(data == '1')
+                    {
+                        $(document).ready(function(){
+                            $('#toast_msg').html('<p>Exclusão de contato com sucesso</br></p>');
+                            $('.toast').toast('show');
+                            $('#cadastroContato').modal('hide');
+                        }); 
+                        limpar();
+                        todosContatos();
+                        todosPrincipaisContatos();
+                    }
+
+                        
+                }
+            });
+        }
+
+
+
+    }
 
     //Importar Contatos Vexpenses
     function importarContatosVexpenses(){
@@ -245,6 +287,7 @@
         {
             $('#campo_telefone' + i + '').remove();
         }
+        $('#botao_remover').remove();
     }
 
     //Deixa todos o campos do endereço menos o CEP somente para leitura
@@ -327,6 +370,7 @@
                                         '</div>'+
                                     '</div>'+
                                 '</div>');
+                                
                                 $("#cepContato"+(i+1)).val(contato[1][i]['cep']);
                                 $("#cepContato"+(i+1)).mask("99.999-999", contato[1][i]['cep']);
                         }
@@ -359,6 +403,8 @@
                                         '</div>');
                         }
                     }
+
+                    $('#botoes_formulario_contato').append('<button id="botao_remover" type="button" class="btn btn-danger" onclick="removerContato('+contato[0][0]['id_contato']+', \''+contato[0][0]['nome']+'\')"><span style="font-weight:bold;">Remover</span></button>');
                 }
             }); 
     }

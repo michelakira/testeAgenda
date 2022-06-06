@@ -215,3 +215,24 @@ if(isset($_POST['integracao']) && $_POST['integracao'] == 'team-members')
     }
 
 }
+
+//remover o contato
+if(isset($_POST['remover']) && $_POST['remover'] == 'remover_contato' && isset($_POST['contato']) && $_POST['contato'] > 0)
+{
+
+    $resultContato = $contato->removerContato($_POST['contato']);
+    $resultTelefone = $contato->removerTelefone(0, $_POST['contato']);
+    $resultEndereco = $contato->removerEndereco(0, $_POST['contato']);
+
+
+    //retorna e a inclusão foi realizada e 2 se acaso apresentou algum problema
+    if(isset($resultContato) > 0 && isset($resultTelefone) > 0 && isset($resultEndereco) > 0)
+    {
+        echo json_encode(1);
+    }
+    else
+    {
+        echo json_encode(0);
+    }
+
+}

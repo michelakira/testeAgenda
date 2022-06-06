@@ -141,7 +141,7 @@ else if(isset($_POST['botao_sair']) && $_POST['botao_sair'] == 'botao_sair')
             <input type="hidden" id="codigo_contato" name="codigo_contato">
         </form>
         </div>
-        <div class="modal-footer">
+        <div class="modal-footer" id="botoes_formulario_contato">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="limpar()"><span style="font-weight:bold;">Fechar</span></button>
             <button type="submit" class="btn bt_salvar_form" onclick="salvar()"><span style="font-weight:bold;">Salvar</span></button>
         </div>

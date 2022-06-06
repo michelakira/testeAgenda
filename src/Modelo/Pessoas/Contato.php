@@ -198,4 +198,22 @@ class Contato extends Pessoa
         return 0;
 
     }
+
+    public function removerContato($id_contato): int
+    {
+
+
+        $sql = "DELETE FROM contatos WHERE id_contato = '{$id_contato}' LIMIT 1 ";
+
+		$consulta = Conexao::prepare($sql);
+		$resultado = $consulta->execute();
+
+
+        if($resultado)
+        {
+            return 1;
+        }
+        return 0;
+
+    }
 }
