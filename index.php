@@ -31,7 +31,8 @@ else if(isset($_POST['botao_sair']) && $_POST['botao_sair'] == 'botao_sair')
 <nav class="navbar navbar-light bg-light">
     <div class="container-fluid">
         <div class="col-2">
-        <a href="index.php" class="navbar-brand titulo-agenda">Contatos</a><a class="btn adicionar_contato" type="button" data-bs-toggle="modal" data-bs-target="#cadastroContato" onclick="limpar()"><i class="fa fa-plus"></i></a>
+            <a href="index.php" class="navbar-brand titulo-agenda">Contatos</a>
+            <a class="btn adicionar_contato" type="button" data-bs-toggle="modal" data-bs-target="#cadastroContato" onclick="limpar()"><i class="fa fa-plus"></i></a>
         </div>
         <div class="col-8">
         <form method="POST">
@@ -41,7 +42,7 @@ else if(isset($_POST['botao_sair']) && $_POST['botao_sair'] == 'botao_sair')
                 <button class="btn bt_pesquisa" type="submit" name="botao_pesquisa" value="botao_pesquisa"><i class="fa fa-search"></i></button>
                 <button class="btn bt_pesquisa" type="submit" name="botao_sair" value="botao_sair">Sair</button>
             </div>
-    
+            <a class="btn bt_pesquisa" onclick="importarContatosVexpenses()">Importar API VExpenses</a>
         </form>
         </div>
         <div class="container-fluid contatos">

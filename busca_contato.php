@@ -165,14 +165,53 @@ if(isset($_POST['salvar']) && $_POST['salvar'] == 'salvar')
 
 }
 
+//remove o endereço do contato
 if(isset($_POST['removerEndereco']) && isset($_POST['endereco']))
 {
     $resultContato = $contato->removerEndereco($_POST['endereco'], 0);
     echo json_encode($resultContato);
 }
 
+//remove o telefone do contato
 if(isset($_POST['removerTelefone']) && isset($_POST['telefone']))
 {
     $resultContato = $contato->removerTelefone($_POST['telefone'], 0);
     echo json_encode($resultContato);
+}
+
+//Integração com a vexpenses
+if(isset($_POST['integracao']) && $_POST['integracao'] == 'team-members')
+{
+
+    $response = exec('curl -X GET "https://api.vexpenses.com/v2/team-members"   -H "Accept: application/json" -H "Authorization: 1nZ4ihczwPiTJ9YwszmGDK4OfcOTFc7xJEoAzkFJ0TpliC6cvyqcpRAQW2A4"');
+  
+
+    $dados = json_decode($response, true);
+
+
+	for($i = 0; $i < count($dados['data']); $i ++)
+	{
+        //retorna o contato para inserir o endereço
+        $resultContato = $contato->insertUpdate('',$dados['data'][$i]['name'],'');
+
+        $dados['data'][$i]['phone1'];
+        if(!empty($dados['data'][$i]['phone1']))
+        {
+            $ddd = substr($dados['data'][$i]['phone1'], 1, 2);
+            $telefone = str_replace("-", "", substr($dados['data'][$i]['phone1'], 5, 10));
+            $resultTelefone = $contato->insertTelefone($resultContato,$ddd,$telefone);
+        }
+        
+	}
+
+    //retorna e a inclusão foi realizada e 2 se acaso apresentou algum problema
+    if(isset($resultContato) > 0 && isset($resultTelefone) > 0)
+    {
+        echo json_encode(1);
+    }
+    else
+    {
+        echo json_encode(0);
+    }
+
 }

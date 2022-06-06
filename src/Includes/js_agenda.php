@@ -1,5 +1,34 @@
 <script>
 
+    //Importar Contatos Vexpenses
+    function importarContatosVexpenses(){
+        $.ajax({
+                type: 'POST',
+                datType: 'json',
+                url:  'busca_contato.php',
+                data: {
+                    integracao: 'team-members'
+                },
+                success: function(data)
+                {
+                    if(data == '0')
+                    {
+                        $(document).ready(function(){
+                            $('#toast_msg').html('<p>Erro ao importar dados da API VExpenses</br></p>');
+                            $('.toast').toast('show');
+                        }); 
+                    }
+                    else if(data == '1')
+                    {
+                        $(document).ready(function(){
+                            $('#toast_msg').html('<p>Contatos importados da API VExpenses com sucesso</br></p>');
+                            $('.toast').toast('show');
+                        }); 
+                    }
+                }
+        });
+    }
+
     //carrega contatos no load da pagina
     $(window).on('load', function () {
         todosContatos();
